@@ -1,0 +1,30 @@
+{
+  "name": "hubot-teeworlds",
+  "version": "0.0.0",
+  "description": "Teeworlds adapter for Hubot",
+  "homepage": "",
+  "author": {
+    "name": "Black Roland",
+    "url": "https://github.com/black-roland"
+  },
+  "files": [
+    "lib"
+  ],
+  "main": "lib/hubot-teeworlds.coffee",
+  "keywords": [
+    "hubot",
+    "teeworlds",
+    "adapter"
+  ],
+  "repository": "black-roland/hubot-teeworlds",
+  "devDependencies": {
+    "gulp": "^3.6.0",
+    "gulp-eslint": "^1.0.0",
+    "gulp-exclude-gitignore": "^1.0.0",
+    "gulp-nsp": "^2.1.0"
+  },
+  "scripts": {
+    "prepublish": "gulp prepublish",
+  },
+  "license": "MIT"
+}
