@@ -23,8 +23,11 @@
     "gulp-exclude-gitignore": "^1.0.0",
     "gulp-nsp": "^2.1.0"
   },
+  "peerDependencies": {
+    "hubot": ">=2.0.0"
+  },
   "scripts": {
-    "prepublish": "gulp prepublish",
+    "prepublish": "gulp prepublish"
   },
   "license": "MIT"
 }
