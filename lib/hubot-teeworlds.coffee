@@ -1,4 +1,4 @@
-{ Socket } = require('net');
+TeeworldsConsole = require './teeworlds-console'
 
 try
   { Adapter, TextMessage, User } = require 'hubot'
@@ -16,39 +16,36 @@ class TeeworldsAdapter extends Adapter
       port:     parseInt process.env['HUBOT_TW_PORT']
       password: process.env['HUBOT_TW_PASSWORD']
 
-  send: (envelope, messages...) =>
-    messages.forEach (message) =>
-      @conn.write "say #{line}\n" for line in message.split '\n'
+    @console = new TeeworldsConsole @options;
 
-  reply: (envelope, messages...) =>
-    messages.forEach (message) =>
-      @conn.write "say #{envelope.user.name}: #{line}\n" for line in message.split '\n'
+  send: (envelope, messages...) ->
+    @console.say message for message in messages
 
-  parseData: (buf) =>
-    str = buf.toString 'utf8'
+  reply: (envelope, messages...) ->
+    @console.say "#{envelope.user.name}: #{message}" for message in messages
 
-    matches = /\[chat\]: [0-9]+:[0-9\-]+:([^:]+): (.*)/g.exec str
-    return unless matches
-
-    [ from, message ] = matches[1..2]
-
-    @robot.logger.debug "Received message: #{message} from: #{from}"
+  chat: (from, text) =>
+    @robot.logger.debug "Received message: #{from}: #{text}"
 
     user = new User from
-    message = new TextMessage(user, message)
+    message = new TextMessage user, text
 
     @receive message
 
-  run: () =>
-    @conn = new Socket();
+  run: () ->
+    @console.on 'online', () =>
+      @emit 'connected'
+      @robot.logger.info 'Hubot online'
 
-    @conn.on 'data', @parseData
+    @console.on 'chat', @chat
 
-    @conn.connect @options.port, @options.host, () =>
-      @conn.write @options.password + '\n'
+    # @console.on 'enter', (user) ->
+    #   console.log 'Enter', user
+    #
+    # @console.on 'leave', (user) ->
+    #   console.log 'Leave', user
 
-    @emit "connected"
-    @robot.logger.info 'Hubot online'
+    @console.connect()
 
 module.exports.use = (robot) ->
   new TeeworldsAdapter robot
