@@ -48,6 +48,9 @@ class TeeworldsAdapter extends Adapter
 
     @receive message
 
+  topic: (envelope, strings...) ->
+    @console.topic strings.join '\n'
+
   run: () ->
     @console.on 'online', () =>
       @emit 'connected'

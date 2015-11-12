@@ -18,8 +18,8 @@ class TeeworldsConsole extends EventEmitter
     lines = message.split '\n'
     @exec "say #{line}" for line in lines
 
-  topic: (message) ->
-    @exec "sv_motd #{message}"
+  topic: (strings) ->
+    @exec "sv_motd #{strings}"
 
   handleMessages: (message) =>
     # chat enter
