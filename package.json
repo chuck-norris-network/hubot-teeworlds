@@ -29,5 +29,8 @@
   "scripts": {
     "prepublish": "gulp prepublish"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "parent-require": "^1.0.0"
+  }
 }
