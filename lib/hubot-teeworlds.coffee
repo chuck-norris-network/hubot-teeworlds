@@ -1,10 +1,10 @@
 TeeworldsConsole = require './teeworlds-console'
 
 try
-  { Adapter, TextMessage, User } = require 'hubot'
+  { Adapter, TextMessage, EnterMessage, LeaveMessage, User } = require 'hubot'
 catch
   prequire = require 'parent-require'
-  { Adapter, TextMessage, User } = prequire 'hubot'
+  { Adapter, TextMessage, EnterMessage, LeaveMessage, User } = prequire 'hubot'
 
 class TeeworldsAdapter extends Adapter
 
@@ -32,18 +32,30 @@ class TeeworldsAdapter extends Adapter
 
     @receive message
 
+  enter: (from) =>
+    @robot.logger.debug "#{from} joined"
+
+    user = new User from
+    message = new EnterMessage user
+
+    @receive message
+
+  leave: (from) =>
+    @robot.logger.debug "#{from} leaved"
+
+    user = new User from
+    message = new LeaveMessage user
+
+    @receive message
+
   run: () ->
     @console.on 'online', () =>
       @emit 'connected'
       @robot.logger.info 'Hubot online'
 
     @console.on 'chat', @chat
-
-    # @console.on 'enter', (user) ->
-    #   console.log 'Enter', user
-    #
-    # @console.on 'leave', (user) ->
-    #   console.log 'Leave', user
+    @console.on 'enter', @enter
+    @console.on 'leave', @leave
 
     @console.connect()
 
