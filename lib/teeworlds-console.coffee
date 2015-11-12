@@ -12,7 +12,10 @@ class TeeworldsConsole extends EventEmitter
   exec: (message) ->
     return false if !@connection
 
-    @connection.write message + '\n'
+    # escape command
+    [ command ] = message.split ';'
+
+    @connection.write command + '\n'
 
   say: (message) ->
     lines = message.split '\n'
