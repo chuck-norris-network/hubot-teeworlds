@@ -32,7 +32,7 @@ class TeeworldsConsole extends EventEmitter
       return @emit 'enter', matches[1]
 
     # chat leave
-    if matches = /^\[chat\]: \*\*\* '([^']+)' has left the game$/.exec message
+    if matches = /^\[chat\]: \*\*\* '([^']+)' has left the game.*/.exec message
       return @emit 'leave', matches[1]
 
     # chat message
