@@ -10,7 +10,8 @@ gulp.task('static', function() {
   return gulp.src('**/*.coffee')
     .pipe(excludeGitignore())
     .pipe(coffeelint())
-    .pipe(coffeelint.reporter());
+    .pipe(coffeelint.reporter())
+    .pipe(coffeelint.reporter('fail'));
 });
 
 gulp.task('nsp', function(cb) {

@@ -1,4 +1,4 @@
-{ Socket } = require 'net';
+{ Socket } = require 'net'
 { EventEmitter } = require 'events'
 split = require 'split'
 
@@ -25,20 +25,29 @@ class TeeworldsConsole extends EventEmitter
     @exec "sv_motd #{strings}"
 
   handleMessages: (message) =>
+    # coffeelint: disable=max_line_length
+
     # chat enter
-    return @emit 'enter', matches[1] if matches = /^\[chat\]: \*\*\* '([^']+)' entered and joined the (game|spectators)$/.exec message
+    if matches = /^\[chat\]: \*\*\* '([^']+)' entered and joined the (game|spectators)$/.exec message
+      return @emit 'enter', matches[1]
 
     # chat leave
-    return @emit 'leave', matches[1] if matches = /^\[chat\]: \*\*\* '([^']+)' has left the game$/.exec message
+    if matches = /^\[chat\]: \*\*\* '([^']+)' has left the game$/.exec message
+      return @emit 'leave', matches[1]
 
     # chat message
-    return @emit 'chat', matches[2], matches[3] if matches = /^\[(teamchat|chat)\]: [0-9]+:[0-9-]+:([^:]+): (.*)$/.exec message
+    if matches = /^\[(teamchat|chat)\]: [0-9]+:[0-9-]+:([^:]+): (.*)$/.exec message
+      return @emit 'chat', matches[2], matches[3]
 
     # authentication request
-    return @exec @options.password if message == 'Enter password:'
+    if message == 'Enter password:'
+      return @exec @options.password
 
     # connected
-    return @emit 'online' if message == 'Authentication successful. External console access granted.'
+    if message == 'Authentication successful. External console access granted.'
+      return @emit 'online'
+
+    # coffeelint: enable=max_line_length
 
   handleEnd: () =>
     @emit 'end'
@@ -48,7 +57,7 @@ class TeeworldsConsole extends EventEmitter
     @emit 'error', err
 
   connect: () ->
-    @connection = new Socket();
+    @connection = new Socket()
 
     @connection
       .pipe split('\n\u0000\u0000')
@@ -65,4 +74,4 @@ class TeeworldsConsole extends EventEmitter
     @connection.destroy()
     @connection = null
 
-module.exports = TeeworldsConsole;
+module.exports = TeeworldsConsole

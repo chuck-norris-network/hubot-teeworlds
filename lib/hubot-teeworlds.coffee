@@ -16,7 +16,7 @@ class TeeworldsAdapter extends Adapter
       port:     parseInt process.env['HUBOT_TW_PORT']
       password: process.env['HUBOT_TW_PASSWORD']
 
-    @console = new TeeworldsConsole @options;
+    @console = new TeeworldsConsole @options
 
   send: (envelope, messages...) ->
     @console.say message for message in messages
