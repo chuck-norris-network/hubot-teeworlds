@@ -1,19 +1,19 @@
 'use strict';
+
 var path = require('path');
 var gulp = require('gulp');
-var eslint = require('gulp-eslint');
+var coffeelint = require('gulp-coffeelint');
 var excludeGitignore = require('gulp-exclude-gitignore');
 var nsp = require('gulp-nsp');
 
-gulp.task('static', function () {
-  return gulp.src('**/*.js')
+gulp.task('static', function() {
+  return gulp.src('**/*.coffee')
     .pipe(excludeGitignore())
-    .pipe(eslint())
-    .pipe(eslint.format())
-    .pipe(eslint.failAfterError());
+    .pipe(coffeelint())
+    .pipe(coffeelint.reporter());
 });
 
-gulp.task('nsp', function (cb) {
+gulp.task('nsp', function(cb) {
   nsp({package: path.resolve('package.json')}, cb);
 });
 
