@@ -53,7 +53,7 @@ class TeeworldsAdapter extends Adapter
     @receive message
 
   topic: (envelope, strings...) ->
-    @console.topic strings.join '\n'
+    @console.topic strings.join('\n').replace(/\n/g, '\\n')
 
   reconnect: () ->
     setTimeout () =>
