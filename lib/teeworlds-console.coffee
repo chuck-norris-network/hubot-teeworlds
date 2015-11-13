@@ -47,14 +47,17 @@ class TeeworldsConsole extends EventEmitter
     if message == 'Authentication successful. External console access granted.'
       return @emit 'online'
 
+    # wrong password
+    if /^Wrong password [0-9\/]+.$/.exec message
+      @emit 'error', new Error "#{message} Disconnecting"
+      return @disconnect()
+
+    # authentication timeout
+    if message == 'authentication timeout'
+      @emit 'error', new Error 'Authentication timeout. Disconnecting'
+      return @disconnect()
+
     # coffeelint: enable=max_line_length
-
-  handleEnd: () =>
-    @emit 'end'
-    @disconnect()
-
-  handleError: (err) =>
-    @emit 'error', err
 
   connect: () ->
     @connection = new Socket()
@@ -62,16 +65,27 @@ class TeeworldsConsole extends EventEmitter
     @connection
       .pipe split('\n\u0000\u0000')
       .on 'data', @handleMessages
-    @connection.on 'end', @handleEnd
-    @connection.on 'error', @handleError
+
+    @connection.on 'error', (err) =>
+      @emit 'error', err
+      @disconnect()
+    @connection.on 'close', @disconnect
+    @connection.on 'end', @disconnect
+
+    @connection.setKeepAlive true
 
     @connection.connect @options.port, @options.host
 
-  disconnect: () ->
-    @connection.removeListener 'data', @handleMessages
-    @connection.removeListener 'end', @handleMessages
-    @connection.removeListener 'error', @handleMessages
+  disconnect: () =>
+    @emit 'end'
+
+    return if !@connection
+
+    @connection.removeAllListeners 'data'
+    @connection.removeAllListeners 'end'
+    @connection.removeAllListeners 'error'
     @connection.destroy()
+    @connection.unref()
     @connection = null
 
 module.exports = TeeworldsConsole

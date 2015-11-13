@@ -56,6 +56,9 @@ class TeeworldsAdapter extends Adapter
       @emit 'connected'
       @robot.logger.info 'Hubot online'
 
+    @console.on 'error', (err) =>
+      @robot.logger.error err.message
+
     @console.on 'chat', @chat
     @console.on 'enter', @enter
     @console.on 'leave', @leave
