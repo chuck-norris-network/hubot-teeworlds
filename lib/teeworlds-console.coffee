@@ -60,6 +60,8 @@ class TeeworldsConsole extends EventEmitter
     # coffeelint: enable=max_line_length
 
   connect: () ->
+    return false if @connection
+
     @connection = new Socket()
 
     @connection
@@ -68,7 +70,6 @@ class TeeworldsConsole extends EventEmitter
 
     @connection.on 'error', (err) =>
       @emit 'error', err
-      @disconnect()
     @connection.on 'close', @disconnect
     @connection.on 'end', @disconnect
 
@@ -77,8 +78,6 @@ class TeeworldsConsole extends EventEmitter
     @connection.connect @options.port, @options.host
 
   disconnect: () =>
-    @emit 'end'
-
     return if !@connection
 
     @connection.removeAllListeners 'data'
@@ -87,5 +86,6 @@ class TeeworldsConsole extends EventEmitter
     @connection.destroy()
     @connection.unref()
     @connection = null
+    @emit 'end'
 
 module.exports = TeeworldsConsole

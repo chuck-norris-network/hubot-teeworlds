@@ -8,6 +8,8 @@ catch
 
 class TeeworldsAdapter extends Adapter
 
+  reconnectInterval: 30000
+
   constructor: (robot) ->
     super
 
@@ -15,6 +17,8 @@ class TeeworldsAdapter extends Adapter
       host:     process.env['HUBOT_TW_HOST']
       port:     parseInt process.env['HUBOT_TW_PORT']
       password: process.env['HUBOT_TW_PASSWORD']
+
+    @connected = false
 
     @console = new TeeworldsConsole @options
 
@@ -51,13 +55,25 @@ class TeeworldsAdapter extends Adapter
   topic: (envelope, strings...) ->
     @console.topic strings.join '\n'
 
+  reconnect: () ->
+    setTimeout () =>
+      @robot.logger.info 'Reconnecting...'
+      @console.connect()
+      @reconnectTimer = null
+    , @reconnectInterval
+
   run: () ->
     @console.on 'online', () =>
-      @emit 'connected'
+      @emit if @connected then 'reconnected' else 'connected'
+      @connected = true
       @robot.logger.info 'Hubot online'
 
     @console.on 'error', (err) =>
       @robot.logger.error err.message
+
+    @console.on 'end', () =>
+      @robot.logger.info 'Connection error, attempting to reconnect'
+      @reconnect()
 
     @console.on 'chat', @chat
     @console.on 'enter', @enter
