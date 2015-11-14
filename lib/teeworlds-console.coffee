@@ -22,7 +22,7 @@ class TeeworldsConsole extends EventEmitter
     @exec "say #{line}" for line in lines
 
   topic: (strings) ->
-    @exec "sv_motd #{strings}"
+    @exec "sv_motd #{strings.replace(/\n/g, '\\n')}"
 
   handleMessages: (message) =>
     # coffeelint: disable=max_line_length
