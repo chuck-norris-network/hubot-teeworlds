@@ -59,7 +59,6 @@ class TeeworldsAdapter extends Adapter
     setTimeout () =>
       @robot.logger.info 'Reconnecting...'
       @console.connect()
-      @reconnectTimer = null
     , @reconnectInterval
 
   run: () ->
