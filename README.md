@@ -1,4 +1,6 @@
-# Hubot Teeworlds Adapter [![NPM version][npm-image]][npm-url] [![Dependency Status][daviddm-image]][daviddm-url]
+# Hubot Teeworlds Adapter
+
+[![NPM version][npm-image]][npm-url] [![Dependency Status][daviddm-image]][daviddm-url]
 
 Connects Hubot to your [Teeworlds](https://www.teeworlds.com/) game server.
 
