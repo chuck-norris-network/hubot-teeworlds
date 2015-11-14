@@ -28,7 +28,7 @@ class TeeworldsConsole extends EventEmitter
     # coffeelint: disable=max_line_length
 
     # chat enter
-    if matches = /^\[chat\]: \*\*\* '([^']+)' entered and joined the (game|spectators)$/.exec message
+    if matches = /^\[chat\]: \*\*\* '([^']+)' entered and joined the.*/.exec message
       return @emit 'enter', matches[1]
 
     # chat leave
