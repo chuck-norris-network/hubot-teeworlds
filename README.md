@@ -6,7 +6,7 @@ Connects Hubot to your [Teeworlds](https://www.teeworlds.com/) game server.
 
 ## Getting started
 
-1. Configure Teeworlds external console. See [Teeworlds configuration](#hubot-configuration) section.
+1. Configure Teeworlds external console. See [Teeworlds configuration](#teeworlds-configuration) section.
 2. Install adapter: `$ npm install --save hubot-teeworlds`.
 3. Set the environment variables specified in [Hubot configuration](#hubot-configuration) section.
 4. Run Hubot: `$ bin/hubot -a teeworlds`.
