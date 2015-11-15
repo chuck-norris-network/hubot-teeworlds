@@ -18,11 +18,18 @@ class TeeworldsConsole extends EventEmitter
     @connection.write command + '\n'
 
   say: (message) ->
+    # split multiline message
     lines = message.split '\n'
-    @exec "say #{line}" for line in lines
+
+    # split long messages to chunks
+    chunks = []
+    chunks = chunks.concat (line.match /.{1,109}/g) for line in lines
+
+    # execute say command
+    @exec "say #{chunk}" for chunk in chunks
 
   topic: (strings) ->
-    @exec "sv_motd #{strings.replace(/\n/g, '\\n')}"
+    @exec "sv_motd #{strings.replace /\n/g, '\\n'}"
 
   handleMessages: (message) =>
     # coffeelint: disable=max_line_length
