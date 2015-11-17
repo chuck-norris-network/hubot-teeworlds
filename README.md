@@ -16,8 +16,9 @@ Connects Hubot to your [Teeworlds](https://www.teeworlds.com/) game server.
 Add the following lines to Teeworlds server config:
 
 ```
-ec_port 8303
-ec_password secret
+ec_port         8303
+ec_password     secret
+ec_output_level 2
 ```
 
 Restart server and test connection using telnet or ncat: `$ telnet localhost 8303`.
