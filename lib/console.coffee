@@ -2,7 +2,7 @@
 { EventEmitter } = require 'events'
 split = require 'split'
 
-class TeeworldsConsole extends EventEmitter
+class Console extends EventEmitter
 
   constructor: (@options) ->
     super
@@ -119,4 +119,4 @@ class TeeworldsConsole extends EventEmitter
     @connection = null
     @emit 'end'
 
-module.exports = TeeworldsConsole
+module.exports = Console

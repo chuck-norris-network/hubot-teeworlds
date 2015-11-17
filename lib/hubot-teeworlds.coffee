@@ -1,4 +1,4 @@
-TeeworldsConsole = require './teeworlds-console'
+Console = require './console'
 { PickupMessage, KillMessage } = require './messages'
 { Hammer, Gun, Shotgun, Rocket, Laser, Katana } = require './weapons'
 try
@@ -21,7 +21,7 @@ class TeeworldsAdapter extends Adapter
 
     @connected = false
 
-    @console = new TeeworldsConsole @options
+    @console = new Console @options
 
   send: (envelope, messages...) ->
     @console.say message for message in messages
