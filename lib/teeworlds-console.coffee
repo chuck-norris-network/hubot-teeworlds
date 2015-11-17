@@ -63,6 +63,11 @@ class TeeworldsConsole extends EventEmitter
       @emit 'pickup', matches[1], matches[2]
       return
 
+    # kill
+    if matches = /^\[game\]: kill killer='[0-9-]+:([^']+)' victim='[0-9-]+:([^']+)' weapon=([0-9]+) special=[0-9]+$/.exec message
+      @emit 'kill', matches[1], matches[2], parseInt matches[3]
+      return
+
     # authentication request
     if message == 'Enter password:'
       @exec @options.password
