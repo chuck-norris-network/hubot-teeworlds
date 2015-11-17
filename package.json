@@ -1,6 +1,6 @@
 {
   "name": "hubot-teeworlds",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "Teeworlds adapter for Hubot",
   "author": {
     "name": "Black Roland",
