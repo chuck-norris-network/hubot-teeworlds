@@ -45,23 +45,33 @@ class TeeworldsConsole extends EventEmitter
 
     # chat enter
     if matches = /^\[chat\]: \*\*\* '([^']+)' entered and joined the.*/.exec message
-      return @emit 'enter', matches[1]
+      @emit 'enter', matches[1]
+      return
 
     # chat leave
     if matches = /^\[chat\]: \*\*\* '([^']+)' has left the game.*/.exec message
-      return @emit 'leave', matches[1]
+      @emit 'leave', matches[1]
+      return
 
     # chat message
     if matches = /^\[(teamchat|chat)\]: [0-9]+:[0-9-]+:([^:]+): (.*)$/.exec message
-      return @emit 'chat', matches[2], matches[3]
+      @emit 'chat', matches[2], matches[3]
+      return
+
+    # pickup
+    if matches = /^\[game\]: pickup player='[0-9-]+:([^']+)' item=([0-9\/]+)$/.exec message
+      @emit 'pickup', matches[1], matches[2]
+      return
 
     # authentication request
     if message == 'Enter password:'
-      return @exec @options.password
+      @exec @options.password
+      return
 
     # connected
     if message == 'Authentication successful. External console access granted.'
-      return @emit 'online'
+      @emit 'online'
+      return
 
     # wrong password
     if /^Wrong password [0-9\/]+.$/.exec message

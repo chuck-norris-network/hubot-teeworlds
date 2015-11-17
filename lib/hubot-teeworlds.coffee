@@ -1,5 +1,6 @@
 TeeworldsConsole = require './teeworlds-console'
-
+{ PickupMessage } = require './messages'
+{ Hammer, Gun, Shotgun, Rocket, Laser, Katana } = require './weapons'
 try
   { Adapter, TextMessage, EnterMessage, LeaveMessage, User } = require 'hubot'
 catch
@@ -52,6 +53,21 @@ class TeeworldsAdapter extends Adapter
 
     @receive message
 
+  pickup: (from, item) =>
+    @robot.logger.debug "#{from} picked #{item}"
+
+    switch item
+      when '2/2' then weapon = new Shotgun
+      when '2/3' then weapon = new Rocket
+      when '2/4' then weapon = new Laser
+      when '3/5' then weapon = new Katana
+      else return
+
+    user = new User from
+    message = new PickupMessage user, weapon
+
+    @receive message
+
   topic: (envelope, strings...) ->
     @console.topic strings.join '\n'
 
@@ -77,6 +93,7 @@ class TeeworldsAdapter extends Adapter
     @console.on 'chat', @chat
     @console.on 'enter', @enter
     @console.on 'leave', @leave
+    @console.on 'pickup', @pickup
 
     @console.connect()
 
