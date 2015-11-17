@@ -57,10 +57,10 @@ class TeeworldsAdapter extends Adapter
     @robot.logger.debug "#{from} picked #{item}"
 
     switch item
-      when '2/2' then weapon = new Shotgun
-      when '2/3' then weapon = new Rocket
-      when '2/4' then weapon = new Laser
-      when '3/5' then weapon = new Katana
+      when 2 then weapon = new Shotgun
+      when 3 then weapon = new Rocket
+      when 4 then weapon = new Laser
+      when 5 then weapon = new Katana
       else return
 
     user = new User from

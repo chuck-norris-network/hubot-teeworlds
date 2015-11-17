@@ -59,8 +59,8 @@ class TeeworldsConsole extends EventEmitter
       return
 
     # pickup
-    if matches = /^\[game\]: pickup player='[0-9-]+:([^']+)' item=([0-9\/]+)$/.exec message
-      @emit 'pickup', matches[1], matches[2]
+    if matches = /^\[game\]: pickup player='[0-9-]+:([^']+)' item=(2|3)+\/([0-9\/]+)$/.exec message
+      @emit 'pickup', matches[1], parseInt matches[3]
       return
 
     # kill
