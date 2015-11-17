@@ -36,6 +36,6 @@ The adapter requires the following environment variables:
 MIT © [Black Roland](https://github.com/black-roland)
 
 [npm-image]: https://badge.fury.io/js/hubot-teeworlds.svg
-[npm-url]: https://npmjs.org/package/hubot-teeworlds
+[npm-url]: https://www.npmjs.com/package/hubot-teeworlds
 [daviddm-image]: https://david-dm.org/black-roland/hubot-teeworlds.svg?theme=shields.io
 [daviddm-url]: https://david-dm.org/black-roland/hubot-teeworlds
