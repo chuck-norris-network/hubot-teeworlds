@@ -31,6 +31,31 @@ The adapter requires the following environment variables:
 * `HUBOT_TW_PORT` — external console port
 * `HUBOT_TW_PASSWORD` — external console password
 
+## Teeworlds specific events
+
+This adapter also generates messages when someone picks a weapon or kills another player. You can handle such messages this way:
+
+```coffeescript
+{ PickupMessage, KillMessage } = require 'hubot-teeworlds/lib/messages'
+{ Hammer, Katana } = require 'hubot-teeworlds/lib/weapons'
+
+module.exports = (robot) ->
+
+  isKatanaPickup = (msg) ->
+    msg instanceof PickupMessage && msg.weapon instanceof Katana
+
+  isHammerKill = (msg) ->
+    msg instanceof KillMessage && msg.weapon instanceof Hammer
+
+  robot.listen isKatanaPickup, {}, (msg) ->
+    msg.send 'Katana!'
+
+  robot.listen isHammerKill, {}, (msg) ->
+    msg.send 'Today is Thor\'s day'
+```
+
+**Note**: `ec_output_level 2` required for this functionality.
+
 ## License
 
 MIT © [Black Roland](https://github.com/black-roland)
