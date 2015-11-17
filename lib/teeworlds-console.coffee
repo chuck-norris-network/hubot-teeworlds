@@ -9,11 +9,8 @@ class TeeworldsConsole extends EventEmitter
 
     @connection = null
 
-  exec: (message) ->
+  exec: (command) ->
     return false if !@connection
-
-    # escape command
-    [ command ] = message.split ';'
 
     @connection.write command + '\n'
 
@@ -23,13 +20,23 @@ class TeeworldsConsole extends EventEmitter
 
     # split long messages to chunks
     chunks = []
-    chunks = chunks.concat (line.match /.{1,109}/g) for line in lines
+    for line in lines
+      chunks = chunks.concat line.match(/.{1,100}/g)
 
     # execute say command
-    @exec "say #{chunk}" for chunk in chunks
+    @exec "say #{@escape chunk}" for chunk in chunks
 
-  topic: (strings) ->
-    @exec "sv_motd #{strings.replace /\n/g, '\\n'}"
+  topic: (topic) ->
+    @exec "sv_motd #{@escape topic}"
+
+  escape: (string) ->
+    # escape quotes
+    string = string.replace /"/g, '\\"'
+
+    # escape line breaks
+    string = string.replace /\n/g, '\\n'
+
+    return '"' +  string + '"'
 
   handleMessages: (message) =>
     # coffeelint: disable=max_line_length
