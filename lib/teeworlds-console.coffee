@@ -10,7 +10,9 @@ class TeeworldsConsole extends EventEmitter
     @connection = null
 
   exec: (command) ->
-    return false if !@connection
+    if !@connection
+      @emit 'error', new Error 'Not connected'
+      return
 
     @connection.write command + '\n'
 
@@ -74,7 +76,7 @@ class TeeworldsConsole extends EventEmitter
     # coffeelint: enable=max_line_length
 
   connect: () ->
-    return false if @connection
+    return if @connection
 
     @connection = new Socket()
 
