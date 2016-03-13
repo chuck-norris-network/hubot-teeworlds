@@ -119,5 +119,4 @@ class TeeworldsAdapter extends Adapter
 
     @console.connect()
 
-module.exports.use = (robot) ->
-  new TeeworldsAdapter robot
+module.exports = TeeworldsAdapter

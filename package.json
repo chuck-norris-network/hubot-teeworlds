@@ -9,7 +9,7 @@
   "files": [
     "lib"
   ],
-  "main": "lib/hubot-teeworlds.coffee",
+  "main": "index.coffee",
   "keywords": [
     "hubot",
     "teeworlds",
