@@ -36,8 +36,8 @@ The adapter requires the following environment variables:
 This adapter also generates messages when someone picks a weapon or kills another player. You can handle such messages this way:
 
 ```coffeescript
-{ PickupMessage, KillMessage } = require 'hubot-teeworlds/lib/messages'
-{ Hammer, Katana } = require 'hubot-teeworlds/lib/weapons'
+{ PickupMessage, KillMessage } = require 'hubot-teeworlds'
+{ Hammer, Katana }             = require 'hubot-teeworlds'
 
 module.exports = (robot) ->
 
