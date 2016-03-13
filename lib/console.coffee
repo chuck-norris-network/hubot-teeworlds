@@ -1,6 +1,7 @@
 { Socket } = require 'net'
 { EventEmitter } = require 'events'
 split = require 'split'
+splitText = require 'split-text'
 
 class Console extends EventEmitter
 
@@ -17,19 +18,20 @@ class Console extends EventEmitter
     @connection.write command + '\n'
 
   say: (message) ->
-    # split multiline message
-    lines = message.split '\n'
-
-    # split long messages to chunks
-    chunks = []
-    for line in lines
-      chunks = chunks.concat line.match(/.{1,100}/g)
+    # split long message to chunks
+    chunks = message
+      .split('\n')
+      .map(@escape)
+      .map (line) ->
+        splitText line, 61
+      .reduce (a, b) ->
+        a.concat b
 
     # execute say command
-    @exec "say #{@escape chunk}" for chunk in chunks
+    @exec "say \"#{chunk}\"" for chunk in chunks
 
   topic: (topic) ->
-    @exec "sv_motd #{@escape topic}"
+    @exec "sv_motd \"#{@escape topic}\""
 
   escape: (string) ->
     # escape quotes
@@ -38,7 +40,7 @@ class Console extends EventEmitter
     # escape line breaks
     string = string.replace /\n/g, '\\n'
 
-    return '"' +  string + '"'
+    return string
 
   handleMessage: (message) =>
     # coffeelint: disable=max_line_length
