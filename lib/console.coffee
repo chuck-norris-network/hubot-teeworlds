@@ -40,7 +40,7 @@ class Console extends EventEmitter
 
     return '"' +  string + '"'
 
-  handleMessages: (message) =>
+  handleMessage: (message) =>
     # coffeelint: disable=max_line_length
 
     # chat enter
@@ -97,7 +97,7 @@ class Console extends EventEmitter
 
     @connection
       .pipe split('\n\u0000\u0000')
-      .on 'data', @handleMessages
+      .on 'data', @handleMessage
 
     @connection.on 'error', (err) =>
       @emit 'error', err
