@@ -43,8 +43,6 @@ class Console extends EventEmitter
     return string
 
   handleMessage: (message) =>
-    # coffeelint: disable=max_line_length
-
     # chat enter
     if matches = /^\[chat\]: \*\*\* '([^']+)' entered and joined the.*/.exec message
       @emit 'enter', matches[1]
@@ -89,8 +87,6 @@ class Console extends EventEmitter
     if message == 'authentication timeout'
       @emit 'error', new Error 'Authentication timeout. Disconnecting'
       return @disconnect()
-
-    # coffeelint: enable=max_line_length
 
   connect: () ->
     return if @connection
