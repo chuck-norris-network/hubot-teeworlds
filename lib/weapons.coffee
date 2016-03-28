@@ -1,23 +1,23 @@
 class Weapon
 
-class Hammer extends Weapon
+class HammerWeapon extends Weapon
 
-class Gun extends Weapon
+class GunWeapon extends Weapon
 
-class Shotgun extends Weapon
+class ShotgunWeapon extends Weapon
 
-class Rocket extends Weapon
+class RocketWeapon extends Weapon
 
-class Laser extends Weapon
+class LaserWeapon extends Weapon
 
-class Katana extends Weapon
+class KatanaWeapon extends Weapon
 
 module.exports = {
   Weapon
-  Hammer
-  Gun
-  Shotgun
-  Rocket
-  Laser
-  Katana
+  HammerWeapon
+  GunWeapon
+  ShotgunWeapon
+  RocketWeapon
+  LaserWeapon
+  KatanaWeapon
 }

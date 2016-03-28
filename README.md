@@ -37,15 +37,15 @@ This adapter also generates messages when someone picks a weapon or kills anothe
 
 ```coffeescript
 { PickupMessage, KillMessage } = require 'hubot-teeworlds'
-{ Hammer, Katana }             = require 'hubot-teeworlds'
+{ HammerWeapon, KatanaWeapon } = require 'hubot-teeworlds'
 
 module.exports = (robot) ->
 
   isKatanaPickup = (msg) ->
-    msg instanceof PickupMessage && msg.weapon instanceof Katana
+    msg instanceof PickupMessage and msg.weapon instanceof KatanaWeapon
 
   isHammerKill = (msg) ->
-    msg instanceof KillMessage && msg.weapon instanceof Hammer
+    msg instanceof KillMessage and msg.weapon instanceof HammerWeapon
 
   robot.listen isKatanaPickup, {}, (msg) ->
     msg.send 'Katana!'

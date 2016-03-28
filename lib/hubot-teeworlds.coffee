@@ -1,6 +1,6 @@
 Console = require './console'
 { PickupMessage, KillMessage } = require './messages'
-{ Hammer, Gun, Shotgun, Rocket, Laser, Katana } = require './weapons'
+{ HammerWeapon, GunWeapon, ShotgunWeapon, RocketWeapon, LaserWeapon, KatanaWeapon } = require './weapons'
 try
   { Adapter, TextMessage, EnterMessage, LeaveMessage, User } = require 'hubot'
 catch
@@ -57,10 +57,10 @@ class TeeworldsAdapter extends Adapter
     @robot.logger.debug "#{from} picked #{item}"
 
     switch item
-      when 2 then weapon = new Shotgun
-      when 3 then weapon = new Rocket
-      when 4 then weapon = new Laser
-      when 5 then weapon = new Katana
+      when 2 then weapon = new ShotgunWeapon
+      when 3 then weapon = new RocketWeapon
+      when 4 then weapon = new LaserWeapon
+      when 5 then weapon = new KatanaWeapon
       else return
 
     user = new User from
@@ -75,12 +75,12 @@ class TeeworldsAdapter extends Adapter
     return if from == whom
 
     switch item
-      when 0 then weapon = new Hammer
-      when 1 then weapon = new Gun
-      when 2 then weapon = new Shotgun
-      when 3 then weapon = new Rocket
-      when 4 then weapon = new Laser
-      when 5 then weapon = new Katana
+      when 0 then weapon = new HammerWeapon
+      when 1 then weapon = new GunWeapon
+      when 2 then weapon = new ShotgunWeapon
+      when 3 then weapon = new RocketWeapon
+      when 4 then weapon = new LaserWeapon
+      when 5 then weapon = new KatanaWeapon
       else return
 
     user = new User from
