@@ -1,6 +1,7 @@
 TeeworldsEcon = require 'teeworlds-econ'
 { PickupMessage, KillMessage } = require './messages'
 { HammerWeapon, GunWeapon, ShotgunWeapon, RocketWeapon, LaserWeapon, KatanaWeapon } = require './weapons'
+{ parseServers } = require './utils'
 try
   { Adapter, TextMessage, EnterMessage, LeaveMessage, User } = require 'hubot'
 catch
@@ -12,49 +13,47 @@ class TeeworldsAdapter extends Adapter
   constructor: (robot) ->
     super
 
-    @server = {
-      host:     process.env['HUBOT_TW_HOST']
-      port:     parseInt process.env['HUBOT_TW_PORT']
-      password: process.env['HUBOT_TW_PASSWORD']
-    }
+    @servers = parseServers process.env['HUBOT_TW_SERVERS']
+    throw new Error('Can\'t parse HUBOT_TW_SERVERS') unless @servers
 
-    unless @server.host and @server.port and @server.password
-      throw new Error('Undefined Teeworlds configuration variables')
-
-    @econ = new TeeworldsEcon @server.host, @server.port, @server.password
+    @consoles = @setupConsoles @servers
 
   send: (envelope, messages...) ->
-    @econ.say message for message in messages
+    @consoles[envelope.user.hostname].say message for message in messages
 
   reply: (envelope, messages...) ->
-    @econ.say "#{envelope.user.name}: #{message}" for message in messages
+    @consoles[envelope.user.hostname].say "#{envelope.user.name}: #{message}" for message in messages
 
-  chat: (from, text) =>
+  topic: (envelope, strings...) ->
+    for hostname, econ of @consoles
+      econ.motd strings.join '\n'
+
+  onChat: (hostname, from, text) =>
     @robot.logger.debug "Received message: #{from}: #{text}"
 
-    user = new User from
+    user = new User from, { hostname, room: hostname }
     message = new TextMessage user, text
 
     @receive message
 
-  enter: (from) =>
-    @robot.logger.debug "#{from} joined"
+  onEnter: (hostname, from) =>
+    @robot.logger.debug "#{from} joined to #{hostname}"
 
-    user = new User from
+    user = new User from, { hostname, room: hostname }
     message = new EnterMessage user
 
     @receive message
 
-  leave: (from) =>
-    @robot.logger.debug "#{from} leaved"
+  onLeave: (hostname, from) =>
+    @robot.logger.debug "#{from} leaved from #{hostname}"
 
-    user = new User from
+    user = new User from, { hostname, room: hostname }
     message = new LeaveMessage user
 
     @receive message
 
-  pickup: (from, item) =>
-    @robot.logger.debug "#{from} picked #{item}"
+  onPickup: (hostname, from, item) =>
+    @robot.logger.debug "#{from} picked #{item} on #{hostname}"
 
     switch item
       when 'shotgun' then weapon = new ShotgunWeapon
@@ -63,13 +62,13 @@ class TeeworldsAdapter extends Adapter
       when 'katana' then weapon = new KatanaWeapon
       else return
 
-    user = new User from
+    user = new User from, { hostname, room: hostname }
     message = new PickupMessage user, weapon
 
     @receive message
 
-  kill: (from, whom, item) =>
-    @robot.logger.debug "#{from} killed #{whom} with #{item}"
+  onKill: (hostname, from, whom, item) =>
+    @robot.logger.debug "#{from} killed #{whom} with #{item} on #{hostname}"
 
     # suicide
     return if from == whom
@@ -83,36 +82,45 @@ class TeeworldsAdapter extends Adapter
       when 'katana' then weapon = new KatanaWeapon
       else return
 
-    user = new User from
-    victim = new User whom
+    user = new User from, { hostname, room: hostname }
+    victim = new User whom, { hostname, room: hostname }
     message = new KillMessage user, victim, weapon
 
     @receive message
 
-  topic: (envelope, strings...) ->
-    @econ.motd strings.join '\n'
+  setupConsoles: (servers) ->
+    consoles = {}
+
+    for hostname, server of servers
+      do (hostname, server) =>
+        econ = new TeeworldsEcon server.host, server.port, server.password
+
+        econ.on 'online', () =>
+          @emit 'connected', server
+          @robot.logger.info 'Connected to %s', hostname
+
+        econ.on 'reconnected', () =>
+          @robot.logger.info 'Reconnected to %s', hostname
+          @emit 'reconnected', server
+
+        econ.on 'error', (err) =>
+          @robot.logger.error err.message, hostname
+
+        econ.on 'reconnect', () =>
+          @robot.logger.info 'Connection to %s lost, attempting to reconnect', hostname
+
+        econ.on 'chat', @onChat.bind(null, hostname)
+        econ.on 'enter', @onEnter.bind(null, hostname)
+        econ.on 'leave', @onLeave.bind(null, hostname)
+        econ.on 'pickup', @onPickup.bind(null, hostname)
+        econ.on 'kill', @onKill.bind(null, hostname)
+
+        consoles[hostname] = econ
+
+    return consoles
 
   run: () ->
-    @econ.on 'online', () =>
-      @emit 'connected'
-      @robot.logger.info 'Hubot online'
-
-    @econ.on 'reconnected', () =>
-      @robot.logger.info 'Reconnected'
-      @emit 'reconnected'
-
-    @econ.on 'error', (err) =>
-      @robot.logger.error err.message
-
-    @econ.on 'reconnect', () =>
-      @robot.logger.info 'Connection error, attempting to reconnect'
-
-    @econ.on 'chat', @chat
-    @econ.on 'enter', @enter
-    @econ.on 'leave', @leave
-    @econ.on 'pickup', @pickup
-    @econ.on 'kill', @kill
-
-    @econ.connect()
+    for hostname, econ of @consoles
+      econ.connect()
 
 module.exports = TeeworldsAdapter
