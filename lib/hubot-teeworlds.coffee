@@ -1,4 +1,4 @@
-Console = require './console'
+TeeworldsEcon = require 'teeworlds-econ'
 { PickupMessage, KillMessage } = require './messages'
 { HammerWeapon, GunWeapon, ShotgunWeapon, RocketWeapon, LaserWeapon, KatanaWeapon } = require './weapons'
 try
@@ -14,20 +14,23 @@ class TeeworldsAdapter extends Adapter
   constructor: (robot) ->
     super
 
-    @options =
+    @server =
       host:     process.env['HUBOT_TW_HOST']
       port:     parseInt process.env['HUBOT_TW_PORT']
       password: process.env['HUBOT_TW_PASSWORD']
 
+    unless @server.host and @server.port and @server.password
+      throw new Error('Undefined Teeworlds configuration variables')
+
     @connected = false
 
-    @console = new Console @options
+    @econ = new TeeworldsEcon @server.host, @server.port, @server.password
 
   send: (envelope, messages...) ->
-    @console.say message for message in messages
+    @econ.say message for message in messages
 
   reply: (envelope, messages...) ->
-    @console.say "#{envelope.user.name}: #{message}" for message in messages
+    @econ.say "#{envelope.user.name}: #{message}" for message in messages
 
   chat: (from, text) =>
     @robot.logger.debug "Received message: #{from}: #{text}"
@@ -57,10 +60,10 @@ class TeeworldsAdapter extends Adapter
     @robot.logger.debug "#{from} picked #{item}"
 
     switch item
-      when 2 then weapon = new ShotgunWeapon
-      when 3 then weapon = new RocketWeapon
-      when 4 then weapon = new LaserWeapon
-      when 5 then weapon = new KatanaWeapon
+      when 'shotgun' then weapon = new ShotgunWeapon
+      when 'rocket' then weapon = new RocketWeapon
+      when 'laser' then weapon = new LaserWeapon
+      when 'katana' then weapon = new KatanaWeapon
       else return
 
     user = new User from
@@ -75,12 +78,12 @@ class TeeworldsAdapter extends Adapter
     return if from == whom
 
     switch item
-      when 0 then weapon = new HammerWeapon
-      when 1 then weapon = new GunWeapon
-      when 2 then weapon = new ShotgunWeapon
-      when 3 then weapon = new RocketWeapon
-      when 4 then weapon = new LaserWeapon
-      when 5 then weapon = new KatanaWeapon
+      when 'hammer' then weapon = new HammerWeapon
+      when 'gun' then weapon = new GunWeapon
+      when 'shotgun' then weapon = new ShotgunWeapon
+      when 'rocket' then weapon = new RocketWeapon
+      when 'laser' then weapon = new LaserWeapon
+      when 'katana' then weapon = new KatanaWeapon
       else return
 
     user = new User from
@@ -90,33 +93,33 @@ class TeeworldsAdapter extends Adapter
     @receive message
 
   topic: (envelope, strings...) ->
-    @console.topic strings.join '\n'
+    @econ.motd strings.join '\n'
 
   reconnect: () ->
     setTimeout () =>
       @robot.logger.info 'Reconnecting...'
-      @console.connect()
+      @econ.connect()
     , @reconnectInterval
 
   run: () ->
-    @console.on 'online', () =>
+    @econ.on 'online', () =>
       @emit if @connected then 'reconnected' else 'connected'
       @connected = true
       @robot.logger.info 'Hubot online'
 
-    @console.on 'error', (err) =>
+    @econ.on 'error', (err) =>
       @robot.logger.error err.message
 
-    @console.on 'end', () =>
+    @econ.on 'end', () =>
       @robot.logger.info 'Connection error, attempting to reconnect'
       @reconnect()
 
-    @console.on 'chat', @chat
-    @console.on 'enter', @enter
-    @console.on 'leave', @leave
-    @console.on 'pickup', @pickup
-    @console.on 'kill', @kill
+    @econ.on 'chat', @chat
+    @econ.on 'enter', @enter
+    @econ.on 'leave', @leave
+    @econ.on 'pickup', @pickup
+    @econ.on 'kill', @kill
 
-    @console.connect()
+    @econ.connect()
 
 module.exports = TeeworldsAdapter
