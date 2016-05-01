@@ -25,11 +25,9 @@ Restart server and test connection using telnet or ncat: `$ telnet localhost 830
 
 ## Hubot configuration
 
-The adapter requires the following environment variables:
+The adapter requires only `HUBOT_TW_SERVERS` environment variable — comma separated list of Teeworlds servers. Server list should be in the following format: `hostname:port:password,...`. Example: `localhost:8303:secret,localhost:8304:secret`.
 
-* `HUBOT_TW_HOST` — IP address or FQDN of Teeworlds server
-* `HUBOT_TW_PORT` — external console port
-* `HUBOT_TW_PASSWORD` — external console password
+Specifying of one server also supported.
 
 ## Teeworlds specific events
 
