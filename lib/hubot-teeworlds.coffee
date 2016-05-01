@@ -9,20 +9,17 @@ catch
 
 class TeeworldsAdapter extends Adapter
 
-  reconnectInterval: 30000
-
   constructor: (robot) ->
     super
 
-    @server =
+    @server = {
       host:     process.env['HUBOT_TW_HOST']
       port:     parseInt process.env['HUBOT_TW_PORT']
       password: process.env['HUBOT_TW_PASSWORD']
+    }
 
     unless @server.host and @server.port and @server.password
       throw new Error('Undefined Teeworlds configuration variables')
-
-    @connected = false
 
     @econ = new TeeworldsEcon @server.host, @server.port, @server.password
 
@@ -95,24 +92,20 @@ class TeeworldsAdapter extends Adapter
   topic: (envelope, strings...) ->
     @econ.motd strings.join '\n'
 
-  reconnect: () ->
-    setTimeout () =>
-      @robot.logger.info 'Reconnecting...'
-      @econ.connect()
-    , @reconnectInterval
-
   run: () ->
     @econ.on 'online', () =>
-      @emit if @connected then 'reconnected' else 'connected'
-      @connected = true
+      @emit 'connected'
       @robot.logger.info 'Hubot online'
+
+    @econ.on 'reconnected', () =>
+      @robot.logger.info 'Reconnected'
+      @emit 'reconnected'
 
     @econ.on 'error', (err) =>
       @robot.logger.error err.message
 
-    @econ.on 'end', () =>
+    @econ.on 'reconnect', () =>
       @robot.logger.info 'Connection error, attempting to reconnect'
-      @reconnect()
 
     @econ.on 'chat', @chat
     @econ.on 'enter', @enter
