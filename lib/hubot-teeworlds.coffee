@@ -19,10 +19,19 @@ class TeeworldsAdapter extends Adapter
     @consoles = @setupConsoles @servers
 
   send: (envelope, messages...) ->
-    @consoles[envelope.user.hostname].say message for message in messages
+    hostname = envelope.hostname ? envelope.user?.hostname ? envelope.room
+    econ = @consoles[hostname]
+
+    unless econ
+      @robot.logger.warning 'Can\'t send message: hostname not found'
+      return
+
+    for message in messages
+      @robot.logger.debug "Sending to #{hostname}: #{message}"
+      econ.say message
 
   reply: (envelope, messages...) ->
-    @consoles[envelope.user.hostname].say "#{envelope.user.name}: #{message}" for message in messages
+    @send envelope, "#{envelope.user.name}: #{message}" for message in messages
 
   topic: (envelope, strings...) ->
     for hostname, econ of @consoles
