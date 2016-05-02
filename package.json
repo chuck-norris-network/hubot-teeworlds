@@ -34,6 +34,6 @@
     "parent-require": "^1.0.0",
     "split": "^1.0.0",
     "split-text": "^1.0.0",
-    "teeworlds-econ": "^1.1.1"
+    "teeworlds-econ": "^1.1.2"
   }
 }
