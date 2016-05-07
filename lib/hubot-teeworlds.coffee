@@ -37,52 +37,54 @@ class TeeworldsAdapter extends Adapter
     for hostname, econ of @consoles
       econ.motd strings.join '\n'
 
-  onChat: (hostname, from, text) =>
-    @robot.logger.debug "Received message: #{from}: #{text}"
+  onChat: (hostname, e) =>
+    @robot.logger.debug "Received message on #{hostname}: #{e.player}: #{e.message}"
 
-    user = new User from, { hostname, room: hostname }
-    message = new TextMessage user, text
+    user = new User e.player, { hostname, room: hostname }
+    message = new TextMessage user, e.message
 
     @receive message
 
-  onEnter: (hostname, from) =>
-    @robot.logger.debug "#{from} joined to #{hostname}"
+  onEnter: (hostname, e) =>
+    @robot.logger.debug "#{e.player} (#{e.ip}) joined to #{e.team} on #{hostname}"
 
-    user = new User from, { hostname, room: hostname }
+    user = new User e.player, { hostname, room: hostname }
     message = new EnterMessage user
+    message.team = e.team
+    message.ip = e.ip
 
     @receive message
 
-  onLeave: (hostname, from) =>
-    @robot.logger.debug "#{from} leaved from #{hostname}"
+  onLeave: (hostname, e) =>
+    @robot.logger.debug "#{e.player} leaved from #{hostname}"
 
-    user = new User from, { hostname, room: hostname }
+    user = new User e.player, { hostname, room: hostname }
     message = new LeaveMessage user
 
     @receive message
 
-  onPickup: (hostname, from, item) =>
-    @robot.logger.debug "#{from} picked #{item} on #{hostname}"
+  onPickup: (hostname, e) =>
+    @robot.logger.debug "#{e.player} picked #{e.weapon} on #{hostname}"
 
-    switch item
+    switch e.weapon
       when 'shotgun' then weapon = new ShotgunWeapon
       when 'rocket' then weapon = new RocketWeapon
       when 'laser' then weapon = new LaserWeapon
       when 'katana' then weapon = new KatanaWeapon
       else return
 
-    user = new User from, { hostname, room: hostname }
+    user = new User e.player, { hostname, room: hostname }
     message = new PickupMessage user, weapon
 
     @receive message
 
-  onKill: (hostname, from, whom, item) =>
-    @robot.logger.debug "#{from} killed #{whom} with #{item} on #{hostname}"
+  onKill: (hostname, e) =>
+    @robot.logger.debug "#{e.killer} killed #{e.victim} with #{e.weapon} on #{hostname}"
 
     # suicide
-    return if from == whom
+    return if e.killer == e.victim
 
-    switch item
+    switch e.weapon
       when 'hammer' then weapon = new HammerWeapon
       when 'gun' then weapon = new GunWeapon
       when 'shotgun' then weapon = new ShotgunWeapon
@@ -91,8 +93,8 @@ class TeeworldsAdapter extends Adapter
       when 'katana' then weapon = new KatanaWeapon
       else return
 
-    user = new User from, { hostname, room: hostname }
-    victim = new User whom, { hostname, room: hostname }
+    user = new User e.killer, { hostname, room: hostname }
+    victim = new User e.victim, { hostname, room: hostname }
     message = new KillMessage user, victim, weapon
 
     @receive message
