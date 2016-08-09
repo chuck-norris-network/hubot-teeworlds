@@ -38,7 +38,9 @@ class TeeworldsAdapter extends Adapter
       econ.motd strings.join '\n'
 
   onChat: (hostname, e) =>
-    @robot.logger.debug "Received message on #{hostname}: #{e.player}: #{e.message}"
+    @robot.logger.debug "Received new #{e.type} message on #{hostname}: #{if e.player then e.player + ': ' else '' }#{e.message}"
+
+    return if e.type not in ['chat', 'teamchat']
 
     user = new User e.player, { hostname, room: hostname }
     message = new TextMessage user, e.message
