@@ -6,34 +6,37 @@
     "name": "Black Roland",
     "url": "https://github.com/black-roland"
   },
-  "files": [
-    "lib",
-    "index.coffee"
-  ],
-  "main": "index.coffee",
+  "license": "MIT",
+  "repository": "black-roland/hubot-teeworlds",
   "keywords": [
     "hubot",
     "teeworlds",
     "adapter"
   ],
-  "repository": "black-roland/hubot-teeworlds",
-  "devDependencies": {
-    "gulp": "^3.9.1",
-    "gulp-coffeelint": "^0.6.0",
-    "gulp-exclude-gitignore": "^1.0.0",
-    "gulp-nsp": "^2.3.1"
-  },
-  "peerDependencies": {
-    "hubot": ">=2.0.0"
-  },
+  "main": "index.coffee",
   "scripts": {
-    "prepublish": "gulp prepublish"
+    "test": "gulp static",
+    "prepublish": "gulp static nsp",
+    "current": "ncu -u -a"
   },
-  "license": "MIT",
+  "files": [
+    "lib",
+    "index.coffee"
+  ],
   "dependencies": {
     "parent-require": "^1.0.0",
     "split": "^1.0.0",
     "split-text": "^1.0.0",
     "teeworlds-econ": "1.2.x"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-coffeelint": "^0.6.0",
+    "gulp-exclude-gitignore": "^1.0.0",
+    "gulp-nsp": "^2.3.1",
+    "npm-check-updates": "^2.8.0"
+  },
+  "peerDependencies": {
+    "hubot": ">=2.0.0"
   }
 }

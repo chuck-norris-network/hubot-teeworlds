@@ -14,5 +14,4 @@ gulp.task 'static', () ->
 gulp.task 'nsp', (cb) ->
   nsp { package: path.resolve('package.json') }, cb
 
-gulp.task 'prepublish', ['static', 'nsp']
 gulp.task 'default', ['static']
