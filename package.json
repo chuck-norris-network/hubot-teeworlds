@@ -30,6 +30,8 @@
     "teeworlds-econ": "1.2.x"
   },
   "devDependencies": {
+    "coffeelint": "^1.15.7",
+    "coffeescope2": "^0.4.1",
     "gulp": "^3.9.1",
     "gulp-coffeelint": "^0.6.0",
     "gulp-exclude-gitignore": "^1.0.0",
