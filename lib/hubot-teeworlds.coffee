@@ -50,10 +50,9 @@ class TeeworldsAdapter extends Adapter
   onEnter: (hostname, e) =>
     @robot.logger.debug "#{e.player} (#{e.ip}) joined to #{e.team} on #{hostname}"
 
-    user = new User e.player, { hostname, room: hostname }
+    user = new User e.player, { hostname, room: hostname, ip: e.ip }
     message = new EnterMessage user
     message.team = e.team
-    message.ip = e.ip
 
     @receive message
 
